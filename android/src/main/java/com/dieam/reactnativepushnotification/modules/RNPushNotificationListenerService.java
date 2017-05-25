@@ -20,18 +20,14 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
     @Override
     public void onMessageReceived(String from, Bundle bundle) {
-        JSONObject data = getPushData(bundle.getString("data"));
-        if (data != null) {
-            if (!bundle.containsKey("message")) {
-                bundle.putString("message", data.optString("alert", "Notification received"));
-            }
-            if (!bundle.containsKey("title")) {
-                bundle.putString("title", data.optString("title", null));
-            }
+        Bundle notification = bundle.getBundle("notification");
 
-            final int badge = data.optInt("badge", -1);
-            if (badge >= 0) {
-                ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(this, badge);
+        if (notification != null) {
+            if (notification.containsKey("body")) {
+                bundle.putString("body",notification.getString("body"));
+            }
+            if (notification.containsKey("title")) {
+                bundle.putString("title",notification.getString("title"));
             }
         }
 
